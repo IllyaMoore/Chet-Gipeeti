@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>ChatBot</title>
+</head>
+<body>
+  <h1>Chet Gipeeti</h1>
+  <div id="chat" style="border:1px solid #ccc; padding:10px; height:300px; overflow-y:scroll;"></div>
+  <textarea id="input" rows="3" style="width:100%;"></textarea><br/>
+  <button id="send">Надіслати</button>
+
+  <script>
+    const chatDiv = document.getElementById("chat");
+    const input = document.getElementById("input");
+    const send = document.getElementById("send");
+
+    send.onclick = async () => {
+      const prompt = input.value.trim();
+      if (!prompt) return;
+
+      chatDiv.innerHTML += `<p><b>You:</b> ${prompt}</p>`;
+      input.value = "";
+
+      const res = await fetch("http://localhost:8000/chat", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({prompt})
+      });
+      const data = await res.json();
+      chatDiv.innerHTML += `<p><b>Бот:</b> ${data.reply}</p>`;
+      chatDiv.scrollTop = chatDiv.scrollHeight;
+    };
+  </script>
+</body>
+</html>
