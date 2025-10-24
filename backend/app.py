@@ -1,12 +1,13 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import requests
+import json
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # змінити на конкретні домени, якщо потрібно
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -20,18 +21,7 @@ system_prompt = """
 Ти — професійний психолог і співрозмовник, який уважно слухає, не оцінює, і допомагає людині зрозуміти власні почуття.  
 Твоя мета — створити спокійну, довірливу атмосферу.  
 Ти відповідаєш українською мовою, доброзичливо і розуміюче.  
-
-Не даєш сухих порад — натомість ставиш м’які уточнювальні питання, допомагаєш людині розібратися самостійно.  
-Якщо тема важка, підтримай словами на кшталт: “Я тебе розумію” або “Це природно так почуватися”.  
-
-Не будь надто формальним — спілкуйся природно, як співрозмовник, не як лікар.  
-Не посилайся на джерела, не вживай складної термінології, не аналізуй “згідно з теорією”.  
-Будь спокійним, теплим і чуйним.  
-
-Якщо користувач вітається — теж привітайся і запропонуй почати розмову.  
-Якщо він не знає, з чого почати, скажи щось на кшталт:  
-“Можеш просто розповісти, що зараз відчуваєш або що тебе турбує.”
-
+...
 """
 
 @app.post("/chat")
@@ -39,18 +29,24 @@ async def chat(request: Request):
     data = await request.json()
     prompt = data.get("prompt", "")
 
-    full_prompt = f"{system_prompt}\nКористувач: {prompt}\n Chet Gipeeti:"
-    
-    response = requests.post(OLLAMA_URL, json={"model": MODEL, "prompt": prompt}, stream=True)
+    full_prompt = f"### System:\n{system_prompt}\n### User:\n{prompt}\n### Assistant:"
+
+    try:
+        response = requests.post(OLLAMA_URL, json={"model": MODEL, "prompt": full_prompt}, stream=True)
+    except requests.exceptions.RequestException as e:
+        return {"error": f"Connection to Ollama failed: {e}"}
+
+    if response.status_code != 200:
+        return {"error": f"Ollama error: {response.status_code}"}
+
     text = ""
     for line in response.iter_lines():
         if line:
             try:
-                decoded = line.decode("utf-8")
-                if '"response":"' in decoded:
-                    part = decoded.split('"response":"')[1].split('"')[0]
-                    text += part
-            except Exception:
-                pass
+                data = json.loads(line)
+                if "response" in data:
+                    text += data["response"]
+            except json.JSONDecodeError:
+                continue
 
     return {"reply": text}
