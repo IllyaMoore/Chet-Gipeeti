@@ -1,0 +1,141 @@
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  background: #f3f4f6;
+  color: #222;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.chat-container {
+  width: 90%;
+  max-width: 650px;
+  height: 80vh;
+  background: #fff;
+  border: 1px solid #d0d4d9;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+header {
+  padding: 14px 20px;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  background: #fafafa;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+main#chat {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.message {
+  display: flex;
+  align-items: flex-start;
+  margin: 10px 0;
+}
+
+.message.user {
+  flex-direction: row-reverse;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #c0c6cc;
+  color: #fff;
+  font-weight: bold;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 10px;
+}
+
+.user .avatar {
+  background: #0056b3;
+}
+
+.bot .avatar {
+  background: #6c757d;
+}
+
+.bubble {
+  background: #f1f3f5;
+  border-radius: 10px;
+  padding: 10px 14px;
+  max-width: 70%;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  border: 1px solid #e1e4e8;
+}
+
+.user .bubble {
+  background: #e8f0fe;
+  border-color: #cdd9ed;
+}
+
+.bot .bubble {
+  background: #f8f9fa;
+}
+
+footer {
+  display: flex;
+  border-top: 1px solid #e0e0e0;
+  padding: 10px;
+  background: #fafafa;
+}
+
+textarea {
+  flex: 1;
+  resize: none;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border 0.2s;
+}
+
+textarea:focus {
+  border-color: #0078d7;
+}
+
+button {
+  background: #0078d7;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-left: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background: #0064b0;
+}
+
+@media (max-width: 600px) {
+  .chat-container {
+    height: 90vh;
+  }
+  .bubble {
+    max-width: 85%;
+  }
+}
